@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Divider, Icon } from "antd";
 import { Modal, Tag, List, Button, WhiteSpace, WingBlank } from 'antd-mobile';
+import  "./Article.css";
 
 function closest(el, selector) {
     const matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
@@ -17,13 +18,15 @@ export default class Atrticle extends Component {
     constructor(props){
         super(props);
         this.state = {
-            sangVisible: false
+            sangVisible: false,
+            sangSuccessVisible: false,
+            selectedSang: 0,
+            tagList: [{ value: 10, selected: false }, { value: 20, selected: false }, { value: 30, selected: false }, { value: 40, selected: false }]
         }
     }
 
 
     showModal = key => (e) => {
-        console.log(key,"fck")
         e.preventDefault(); // 修复 Android 上点击穿透
         this.setState({
             [key]: true,
@@ -36,8 +39,17 @@ export default class Atrticle extends Component {
     }
 
 
+    submitPay(){
+        this.setState({
+            sangVisible: false
+        },() => {
+            this.setState({
+                sangSuccessVisible: true
+            })
+        }) 
+    }
+
     onWrapTouchStart = (e) => {
-        // fix touch to scroll background page on iOS
         if (!/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
             return;
         }
@@ -47,8 +59,22 @@ export default class Atrticle extends Component {
         }
     }
 
-    onChangeSang(selected, index){
-        console.log(selected, index, "selected")
+    onChangeSang(selected, index, item){
+        let { tagList } = this.state;
+        tagList.map((item,index2)=> {
+            if(selected && index === index2){
+                return Object({}, item, {selected: true})
+            } else {
+                return Object({}, item, { selected: false })
+            }
+           
+        })
+        if(selected){
+            this.setState({
+                selectedSang: index
+            })
+        }
+        console.log(selected, index, item, "selected")
     }
 
     render(){
@@ -59,6 +85,7 @@ export default class Atrticle extends Component {
             let spiltItem = item.split("=");
             queryObject[spiltItem[0]] = spiltItem[1];
         }
+        let { tagList } = this.state;
         console.log(queryObject, "a")
         return (
             <div>
@@ -92,14 +119,35 @@ export default class Atrticle extends Component {
                     maskClosable={true}
                     onClose={this.onClose('sangVisible')}
                     title=""
-                    footer={[{ text: '确认支付', onPress: () => { console.log('ok'); this.onClose('sangVisible')(); } }]}
+                    footer={[{ text: '确认支付', onPress: () => { this.submitPay();} }]}
                     wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                 >
-                    <div style={{ height: 100, overflow: 'scroll' }}>
+                    <div style={{ height: 100, overflow: 'scroll' }} style={{display: "flex", flexDirection: "column"}}>
                         <p>炎炎夏日，为她买根棒冰</p>
-                        <Tag onChange={(selected) =>this.onChangeSang(selected, 1)}>Callback1</Tag>
-                        <Tag onChange={(selected) =>this.onChangeSang(selected, 2)}>Callback2</Tag>
-                        <Tag onChange={(selected) =>this.onChangeSang(selected, 3)}>Callbac3</Tag>
+                        <div>
+                            {
+                                tagList && tagList.map((item, index) => {
+                                return (
+                                    <Tag key={`tag-${index}`} onChange={(selected) => this.onChangeSang.call(this, selected, index, item )} style={{ margin: 2 }}>{item.value}CCB</Tag>
+                                )
+                            })
+                            }
+                        </div>
+                    </div>
+                </Modal>
+                <Modal
+                    visible={this.state.sangSuccessVisible}
+                    transparent
+                    closable={true}
+                    maskClosable={true}
+                    onClose={this.onClose('sangSuccessVisible')}
+                    title=""
+                    footer={[{ text: '确定', onPress: () => { console.log('ok'); this.onClose('sangSuccessVisible')(); } }]}
+                    wrapProps={{ onTouchStart: this.onWrapTouchStart }}
+                >
+                    <div style={{ height: 100, overflow: 'scroll' }} >
+                        <h2>支付成功</h2>
+                        <p>成功打赏王二爷<span>100CCB</span></p>
                     </div>
                 </Modal>
             </div>
