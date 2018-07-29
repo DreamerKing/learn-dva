@@ -2,8 +2,9 @@ import dva from 'dva';
 import createHistory from 'history/createBrowserHistory';
 import createLoading from 'dva-loading';
 import user from './models/user';
+import article from "./models/article";
 import './index.css';
-
+import 'antd-mobile/dist/antd-mobile.css';
 
 // 1. Initialize
 const app = dva({
@@ -15,6 +16,7 @@ const app = dva({
 
 app.use(createLoading());
 app.model(user);
+app.model(article);
 // 2. Plugins
 // app.use({});
 

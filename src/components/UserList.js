@@ -7,7 +7,7 @@ export default class UserList extends Component {
         return (
             <ul>
                 {
-                    list.map(user => {
+                    list && list.map(user => {
                         return <li key={user.id}>{`Name: ${user.name} Age:${user.age}`}</li>
                     })
                 }

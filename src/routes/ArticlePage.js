@@ -1,7 +1,8 @@
 import { connect } from 'dva';
 import { withRouter } from 'dva/router';
-import BottomMenu from "../components/BottomMenu";
+import Atrticle from '../components/Article';
 
 export default withRouter(connect(state => {
-  return {...state}
-})(BottomMenu));
+    console.log(state, "ccd")
+    return { ...state }
+})(Atrticle));
